@@ -3,17 +3,22 @@
 #include "action_layer.h"
 #include <sendstring_colemak.h>
 
-#define BASE 0 // default layer
-#define VIM 1 // vim
-#define SYMB 2 // symbols
-#define MOUS 3 // mouse
+#define EUCALYN 0 // eucalyn
+#define QWERTY 1 // qwerty layer
+#define VIM 2 // vim
+#define SYMB 3 // symbols
+#define MOUS 4 // mouse
+#define FUNC1 5 // function1
+#define FUNC2 6 // function2
 
 #define _______ KC_TRNS
+#define XXXXXXX KC_NO
 
 enum {
     M_RSFT,
     M_00,
     M_000,
+    M_0000,
     M_DBQUOT,
     M_BKQUOT,
     M_QUOT,
@@ -29,52 +34,95 @@ enum custom_keycodes {
 };
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
-/* Keymap 0: base layer
+/* Keymap 0: Eucalyn layer
  *
  *
  * ,--------------------------------------------------.           ,--------------------------------------------------.
- * |  L1    | 1 !  | 2 @  | 3 #  | 4 $  | 5 %  |      |           |      | 6 ^  | 7 &  | 8 *  | 9 (  | 0 )  | PrtSc  |
+ * | VIM    | 1 !  | 2 @  | 3 #  | 4 $  | 5 %  |      |           |      | 6 ^  | 7 &  | 8 *  | 9 (  | 0 )  |  \ |   |
  * |--------+------+------+------+------+------+------|           |------+------+------+------+------+------+--------|
- * | Tab    |   Q  |   W  |   E  |   R  |   T  |  ~`  |           |      |   Y  |   U  |   I  |   O  |   P  |  \ |   |
+ * | TAB    | ? /  | < ,  | > .  |   F  |   Q  |  ~   |           |      |   M  |   R  |   D  |   Y  |   P  |  + =   |
+ * |--------+------+------+------+------+------|  `   |           |      |------+------+------+------+------+--------|
+ * | ⌃      |   A  |   O  |   E  |   I  |   U  |------|           |------|   G  |   T  |   K  |   S  |   N  |  " '   |
+ * |--------+------+------+------+------+------|  {   |           |  }   |------+------+------+------+------+--------|
+ * | LShift |   Z  |   X  |   C  |   V  |   W  |  [   |           |  ]   |   B  |   H  |   J  |   L  | : ;  |  - _   |
+ * `--------+------+------+------+------+-------------'           `-------------+------+------+------+------+--------'
+ *   | ~L2  | ~FN1 |GuiAlt| Alt  |  Gui |                                       |  Gui | ESC  |      |      |  FN0 |
+ *   `----------------------------------'                                       `----------------------------------'
+ *                                        ,-------------.       ,---------------.
+ *                                        | App  | F12  |       |Qwerty| PrtSc  |
+ *                                 ,------|------|------|       |------+--------+------.
+ *                                 |      |      | Home |       | PgUp |        |      |
+ *                                 |Space/| Tab/ |------|       |------|  Back  |Enter |
+ *                                 | VIM  | SYMB | End  |       | PgDn |  Space |      |
+ *                                 `--------------------'       `----------------------'
+ */
+[EUCALYN] = LAYOUT_ergodox(  // layer 4 : eucalyn
+        // left hand
+        DF(VIM),      KC_1,    KC_2,        KC_3,       KC_4,              KC_5,    XXXXXXX,
+        KC_TAB,       KC_SLSH, KC_COMM,     KC_DOT,     KC_F,              KC_Q,    KC_GRV,
+        CTL_T(KC_NO), KC_A,    KC_O,        KC_E,       KC_I,              KC_U,
+        KC_LSFT,      KC_Z,    KC_X,        KC_C,       KC_V,              KC_W,    KC_LBRC,
+        MO(MOUS),     KC_FN1,  LGUI(KC_LALT),KC_LALT,    GUI_T(KC_LANG2),
+// -----
+                                                        KC_APP,            KC_F12,
+                                                                           KC_HOME,
+                                     LT(VIM, KC_SPC),   LT(SYMB, KC_TAB),  KC_END,
+// -----
+        // right hand
+        XXXXXXX,      KC_6,    KC_7,    KC_8,     KC_9,    KC_0,     KC_BSLS,
+        XXXXXXX,      KC_M,    KC_R,    KC_D,     KC_Y,    KC_P,     KC_EQL,
+                      KC_G,    KC_T,    KC_K,     KC_S,    KC_N,     KC_QUOT,
+        KC_RBRC,      KC_B,    KC_H,    KC_J,     KC_L,    KC_SCLN,  KC_MINS,
+                               GUI_T(KC_LANG1),   M_ESC,   XXXXXXX,  XXXXXXX,  KC_FN0,
+// -----
+        DF(QWERTY),   KC_PSCREEN,
+        KC_PGUP,
+        KC_PGDN,      LT(FUNC1, KC_BSPC),  LT(FUNC2, KC_ENT)
+),
+/* Keymap qwerty layer
+ *
+ *
+ * ,--------------------------------------------------.           ,--------------------------------------------------.
+ * |  VIM   | 1 !  | 2 @  | 3 #  | 4 $  | 5 %  |      |           |      | 6 ^  | 7 &  | 8 *  | 9 (  | 0 )  |  \ |   |
+ * |--------+------+------+------+------+------+------|           |------+------+------+------+------+------+--------|
+ * | Tab    |   Q  |   W  |   E  |   R  |   T  | ~ `  |           |      |   Y  |   U  |   I  |   O  |   P  |  = +   |
  * |--------+------+------+------+------+------|      |           |      |------+------+------+------+------+--------|
  * | Ctl    |   A  |   S  |   D  |   F  |   G  |------|           |------|   H  |   J  |   K  |   L  | ; :  |  " '   |
  * |--------+------+------+------+------+------| - _  |           | = +  |------+------+------+------+------+--------|
- * | LShift |   Z  |   X  |   C  |   V  |   B  |      |           |      |   N  |   M  | , <  |  . > |  / ? | RShift |
+ * | LShift |   Z  |   X  |   C  |   V  |   B  |      |           |      |   N  |   M  | , <  |  . > |  / ? |  - _   |
  * `--------+------+------+------+------+-------------'           `-------------+------+------+------+------+--------'
  *   | ~L2  | ~FN1 |      | Alt  |  Gui |                                       |  Gui | Esc  |  [ { |  ] } |  FN0 |
  *   `----------------------------------'                                       `----------------------------------'
  *                                        ,-------------.       ,---------------.
- *                                        | App  |      |       |      |        |
+ *                                        | App  |  F12 |       |Eucaly| PrtSc  |
  *                                 ,------|------|------|       |------+--------+------.
  *                                 |      |      | Home |       | PgUp |        |      |
  *                                 |Space/| Tab/ |------|       |------|  Back  |Enter |
- *                                 |L1    | L2   | End  |       | PgDn |  Space |      |
+ *                                 |VIM   | SYMB | End  |       | PgDn |  Space |      |
  *                                 `--------------------'       `----------------------'
  */
-// If it accepts an argument (i.e, is a function), it doesn't need KC_.
-// Otherwise, it needs KC_*
-[BASE] = LAYOUT_ergodox(  // layer 0 : default
+[QWERTY] = LAYOUT_ergodox(
         // left hand
         DF(VIM),      KC_1,    KC_2,        KC_3,       KC_4,              KC_5,    ALL_T(KC_NO),
         KC_TAB,       KC_Q,    KC_W,        KC_E,       KC_R,              KC_T,    KC_GRV,
         CTL_T(KC_NO), KC_A,    KC_S,        KC_D,       KC_F,              KC_G,
         KC_LSFT,      KC_Z,    KC_X,        KC_C,       KC_V,              KC_B,    KC_MINS,
-        MO(MOUS),     KC_FN1,  KC_NO,       KC_LALT,    GUI_T(KC_LANG2),
+        MO(MOUS),     KC_FN1,  XXXXXXX,     KC_LALT,    GUI_T(KC_LANG2),
 // -----
-                                                  ALT_T(KC_APP),     KC_NO,
+                                                  KC_APP,            KC_F12,
                                                                      KC_HOME,
                                LT(VIM, KC_SPC),   LT(SYMB, KC_TAB),  KC_END,
 // -----
         // right hand
-        KC_NO,        KC_6,    KC_7,    KC_8,     KC_9,    KC_0,     KC_PSCREEN,
-        KC_NO,        KC_Y,    KC_U,    KC_I,     KC_O,    KC_P,     KC_BSLS,
+        XXXXXXX,      KC_6,    KC_7,    KC_8,     KC_9,    KC_0,     KC_BSLS,
+        XXXXXXX,      KC_Y,    KC_U,    KC_I,     KC_O,    KC_P,     KC_EQL,
                       KC_H,    KC_J,    KC_K,     KC_L,    KC_SCLN,  KC_QUOT,
-        KC_EQL,       KC_N,    KC_M,    KC_COMM,  KC_DOT,  KC_SLSH,  KC_RSFT,
+        KC_EQL,       KC_N,    KC_M,    KC_COMM,  KC_DOT,  KC_SLSH,  KC_MINS,
                                GUI_T(KC_LANG1),   M_ESC,   KC_LBRC,  KC_RBRC,  KC_FN0,
 // -----
-        KC_NO,        KC_NO,
+        DF(EUCALYN),  XXXXXXX,
         KC_PGUP,
-        KC_PGDN,      KC_BSPC,  KC_ENT
+        KC_PGDN,      LT(FUNC1, KC_BSPC),  LT(FUNC2, KC_ENT)
     ),
 /* Keymap 1: Vim Nomal Mode
  *
@@ -87,7 +135,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * |--------+------+------+------+------+------|      |           |      |------+------+------+------+------+--------|
  * |        |      | Del  |      |Select| PgUp |      |           |      |      | Menu |      |      | Find |        |
  * `--------+------+------+------+------+-------------'           `-------------+------+------+------+------+--------'
- *   | ~L2  |      |      |      |      |                                       |      |      |      |      |      |
+ *   |      |      |      |      |      |                                       |      |      |      |      |      |
  *   `----------------------------------'                                       `----------------------------------'
  *                                        ,-------------.       ,-------------.
  *                                        |      |      |       |      |      |
@@ -99,39 +147,39 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  */
 // Vim Mode
 [VIM] = LAYOUT_ergodox(
-       KC_ESC,   KC_NO,     KC_NO,             KC_NO,       LCTL(KC_E),            KC_NO,      KC_NO,
-       _______,  _______,   LALT(KC_RIGHT),    KC_END,      LGUI(LSFT(KC_Z)),      LGUI(KC_T), _______,
-       _______,  DF(BASE),  LGUI(LALT(KC_F)),  LGUI(KC_X),  KC_PGDN,               KC_HOME,
+       KC_ESC,   XXXXXXX,   XXXXXXX,           XXXXXXX,     LCTL(KC_E),            XXXXXXX,    XXXXXXX,
+       _______,  XXXXXXX,   LALT(KC_RIGHT),    KC_END,      LGUI(LSFT(KC_Z)),      LGUI(KC_T), _______,
+       _______,  DF(QWERTY),LGUI(LALT(KC_F)),  LGUI(KC_X),  KC_PGDN,               KC_HOME,
        _______,  _______,   KC_DELT,           _______,     LALT(LSFT(KC_RIGHT)),  KC_PGUP,    _______,
-       MO(VIM),  _______,   _______,           _______,     _______,
+       _______,  _______,   _______,           _______,     _______,
 // -----
                                                _______,     _______,
                                                             _______,
                                    _______,    _______,     _______,
 // -----
     // right hand
-       KC_NO,    LCTL(KC_A), KC_NO,      KC_NO,    KC_NO,     LCTL(KC_A),  _______,
-       _______,  LGUI(KC_C), LGUI(KC_Z), DF(BASE), DF(BASE),  LGUI(KC_V),  _______,
-                 KC_LEFT,    KC_DOWN,    KC_UP,    KC_RIGHT,  LALT(KC_SPC),_______,
-       _______,  _______,    LCTL(KC_F2),_______,  _______,   LGUI(KC_F),  _______,
-                             _______,    _______,  _______,   _______,     KC_FN2,
+       XXXXXXX,  LCTL(KC_A), XXXXXXX,    XXXXXXX,    XXXXXXX,    LCTL(KC_A),    _______,
+       _______,  LGUI(KC_C), LGUI(KC_Z), DF(QWERTY), DF(QWERTY), LGUI(KC_V),    _______,
+                 KC_LEFT,    KC_DOWN,    KC_UP,      KC_RIGHT,   LALT(KC_SPC),  _______,
+       _______,  _______,    LCTL(KC_F2),_______,    _______,    LGUI(KC_F),    _______,
+                             _______,    _______,    _______,    _______,       KC_FN2,
 // -----
-       _______,  OSL(BASE),
+       _______,  OSL(QWERTY),
        _______,
        _______,  KC_DELT, _______
 ),
 /* Keymap 2: 10key Symbol Layer
- * 
+ *
  * ,--------------------------------------------------.           ,--------------------------------------------------.
- * |        |  F1  |  F2  |  F3  |  F4  |  F5  | F11  |           | F12  |  F6  |  F7  |  F8  |  F9  |  F10 |   /    |
+ * |        |  F1  |  F2  |  F3  |  F4  |  F5  | F11  |           | F12  |  F6  |  F7  |  F8  |  F9  |  F10 |   *    |
  * |--------+------+------+------+------+-------------|           |------+------+------+------+------+------+--------|
- * |        |      | ```  |  ''  |  {}  |      |  /   |           |  -   |      |   7  |   8  |   9  |      |   -    |
+ * |        |      | ```  |  ''  |  {}  |      |      |           |  -   | 0000 |   7  |   8  |   9  |  -   |   -    |
  * |--------+------+------+------+------+------|      |           |      |------+------+------+------+------+--------|
- * |        |      | ---  |  ""  |  ()  |  <>  |------|           |------| 000  |   4  |   5  |   6  |      |   +    |
- * |--------+------+------+------+------+------|  *   |           |  +   |------+------+------+------+------+--------|
- * |        |      |      |      |  []  |      |      |           |      | 00   |   1  |   2  |   3  |  /   |   *    |
+ * |        |      | ---  |  ""  |  ()  |  <>  |------|           |------| 000  |   4  |   5  |   6  |  +   |   +    |
+ * |--------+------+------+------+------+------|      |           |  +   |------+------+------+------+------+--------|
+ * |        |      |      |      |  []  |      |      |           |      | 00   |   1  |   2  |   3  |  /   |   /    |
  * `--------+------+------+------+------+-------------'           `-------------+------+------+------+------+--------'
- *   |      |      |      |      |      |                                       |   0  |      |   .  |  ,   |      |
+ *   |      |      |      |      |      |                                       |   0  |   ,  |   .  |  =   |      |
  *   `----------------------------------'                                       `----------------------------------'
  *                                        ,-------------.       ,-------------.
  *                                        |      |      |       |      |      |
@@ -145,22 +193,22 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 [SYMB] = LAYOUT_ergodox(
        // left hand
        _______,  KC_F1,    KC_F2,       KC_F3,       KC_F4,    KC_F5,    KC_F11,
-       _______,  _______,  M(M_BKQUOT), M(M_QUOT),   M(M_CBR), _______,  _______,
-       _______,  _______,  M(M_MINS),   M(M_DBQUOT), M(M_PRN), M(M_TAG),
-       _______,  _______,  _______,     _______,     M(M_BRC), _______,  _______,
+       _______,  XXXXXXX,  M(M_BKQUOT), M(M_QUOT),   M(M_CBR), XXXXXXX,  XXXXXXX,
+       _______,  XXXXXXX,  M(M_MINS),   M(M_DBQUOT), M(M_PRN), M(M_TAG),
+       _______,  XXXXXXX,  XXXXXXX,     XXXXXXX,     M(M_BRC), XXXXXXX,  XXXXXXX,
        _______,  _______,  _______,     _______,     _______,
                                                                _______,  _______,
                                                                          _______,
                                                      _______,  _______,  _______,
        // right hand
-       KC_F12,   KC_F6,    KC_F7,    KC_F8,    KC_F9,    KC_F10,    KC_SLSH,
-       _______,  _______,  KC_7,     KC_8,     KC_9,     _______,   KC_MINS,
-                 M(M_000), KC_4,     KC_5,     KC_6,     _______,   KC_PLUS,
-       _______,  M(M_00),  KC_1,     KC_2,     KC_3,     _______,   KC_ASTR,
-                           KC_0,     KC_NO,    KC_DOT,   KC_COMM,   _______,
+       KC_F12,   KC_F6,     KC_F7,    KC_F8,    KC_F9,    KC_F10,    KC_ASTR,
+       KC_MINS,  M(M_0000), KC_7,     KC_8,     KC_9,     KC_MINS,   KC_MINS,
+                 M(M_000),  KC_4,     KC_5,     KC_6,     KC_PLUS,   KC_PLUS,
+       KC_PLUS,  M(M_00),   KC_1,     KC_2,     KC_3,     KC_SLSH,   KC_SLSH,
+                            KC_0,     KC_COMM,  KC_DOT,   KC_EQL,    _______,
        _______,  _______,
        _______,
-       _______,  KC_BSPC,  KC_EQL
+       _______,  KC_BSPC,   KC_EQL
 ),
 /* Keymap 3: mouse keys
  *
@@ -188,27 +236,109 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
        KC_POWER,KC_F1,   KC_F2,    KC_F3,    KC_F4,    KC_F5,   KC_F11,
        RESET,   KC_F6,   KC_F7,    KC_F8,    KC_F9,    KC_F10,  KC_WH_U,
        _______, KC_F1,   KC_F2,    KC_F3,    KC_F4,    KC_F5,
-       _______, KC_NO,   KC_ACL2,  KC_ACL1,  KC_ACL0,  KC_NO,   KC_WH_L,
+       _______, XXXXXXX, KC_ACL2,  KC_ACL1,  KC_ACL0,  XXXXXXX, KC_WH_L,
        _______, _______, _______,  _______,  _______,
                                              _______,  _______,
                                                        _______,
                                    KC_WH_U,  KC_WH_L,  _______,
     // right handa
-       _______,  _______, _______, _______, _______, _______, _______,
-       KC_WH_D,  _______, _______, KC_MS_U, _______, _______, KC_MPLY,
-                 _______, KC_MS_L, KC_MS_D, KC_MS_R, _______, KC_MNXT,
-       KC_WH_R,  _______, _______, _______, _______, _______, KC_MPRV,
+       _______,  _______, _______, _______, _______, _______, XXXXXXX,
+       KC_WH_D,  XXXXXXX, XXXXXXX, KC_MS_U, XXXXXXX, XXXXXXX, KC_MPLY,
+                 XXXXXXX, KC_MS_L, KC_MS_D, KC_MS_R, XXXXXXX, KC_MNXT,
+       KC_WH_R,  XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, KC_MPRV,
                           KC_BTN1, KC_BTN2, KC_BTN3, KC_BTN4, KC_BTN5,
        KC_MUTE,  _______,
        KC_VOLU,
        KC_VOLD,  KC_WH_R, KC_WH_D
 ),
+/* Keymap 5: function
+ *
+ * ,--------------------------------------------------.           ,--------------------------------------------------.
+ * |        |      |      |      |      |      |      |           |      |      |      |      |      |      |   -    |
+ * |--------+------+------+------+------+-------------|           |------+------+------+------+------+------+--------|
+ * |        |   1  |   2  |   3  |   4  |   5  |      |           |      |  6   |  7   |   8  |   9  |   0  |   \    |
+ * |--------+------+------+------+------+------|  F11 |           |  F13 |------+------+------+------+------+--------|
+ * |        |  F1  |  F2  |  F3  |  F4  |  F5  |------|           |------|      |      |      |      |      |   =    |
+ * |--------+------+------+------+------+------|      |           |      |------+------+------+------+------+--------|
+ * |        |  F6  |  F7  |  F8  |  F9  |  F10 |  F12 |           |  F14 |      |      |      |      |      |   '    |
+ * `--------+------+------+------+------+-------------'           `-------------+------+------+------+------+--------'
+ *   |      |      |      |      |      |                                       |      |      |      |      |      |
+ *   `----------------------------------'                                       `----------------------------------'
+ *                                        ,-------------.       ,-------------.
+ *                                        |      |      |       |      |      |
+ *                                 ,------|------|------|       |------+------+------.
+ *                                 |      |      |      |       |      |      |      |
+ *                                 |      |      |------|       |------|      |      |
+ *                                 |      |      |      |       |      |      |      |
+ *                                 `--------------------'       `--------------------'
+ */
+// function1
+[FUNC1] = LAYOUT_ergodox(
+       _______, XXXXXXX, XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX, XXXXXXX,
+       _______, KC_1,    KC_2,     KC_3,     KC_4,     KC_5,    KC_F11,
+       _______, KC_F1,   KC_F2,    KC_F3,    KC_F4,    KC_F5,
+       _______, KC_F6,   KC_F7,    KC_F8,    KC_F9,    KC_F10,  KC_F12,
+       _______, _______, _______,  _______,  _______,
+                                             _______,  _______,
+                                                       _______,
+                                   _______,  _______,  _______,
+    // right handa
+       XXXXXXX,  XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, KC_MINS,
+       KC_F13,   KC_6,    KC_7,    KC_8,    KC_9,    KC_0,    KC_BSLS,
+                 XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, KC_EQL,
+       KC_F14,   XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, KC_QUOT,
+                          _______, _______, XXXXXXX, XXXXXXX, XXXXXXX,
+       _______,  _______,
+       _______,
+       _______,  _______, _______
+),
+/* Keymap 6: function2
+ *
+ * ,--------------------------------------------------.           ,--------------------------------------------------.
+ * |        |      |      |      |      |      |      |           |      |      |      |      |      |      |        |
+ * |--------+------+------+------+------+-------------|           |------+------+------+------+------+------+--------|
+ * |        |      |      |      |      |      |      |           |      |      |      |      |   <  |   >  |   |    |
+ * |--------+------+------+------+------+------|      |           |      |------+------+------+------+------+--------|
+ * |        |   !  |   @  |   #  |   $  |   %  |------|           |------|   ^  |   &  |   *  |   (  |   )  |   '    |
+ * |--------+------+------+------+------+------|      |           |      |------+------+------+------+------+--------|
+ * |        |      |      |      |      |      |      |           |      |      |      |      |   {  |   }  |   +    |
+ * `--------+------+------+------+------+-------------'           `-------------+------+------+------+------+--------'
+ *   |      |      |      |      |      |                                       |      |      |   [  |   ]  |      |
+ *   `----------------------------------'                                       `----------------------------------'
+ *                                        ,-------------.       ,-------------.
+ *                                        |      |      |       |      |      |
+ *                                 ,------|------|------|       |------+------+------.
+ *                                 |      |      |      |       |      |      |      |
+ *                                 |      |      |------|       |------|      |      |
+ *                                 |      |      |      |       |      |      |      |
+ *                                 `--------------------'       `--------------------'
+ */
+// function2
+[FUNC2] = LAYOUT_ergodox(
+       _______, XXXXXXX, XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX, XXXXXXX,
+       _______, XXXXXXX, XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX, XXXXXXX,
+       _______, KC_EXLM, KC_AT,    KC_HASH,  KC_DLR,   KC_PERC,
+       _______, XXXXXXX, XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX, XXXXXXX,
+       _______, _______, _______,  _______,  _______,
+                                             _______,  _______,
+                                                       _______,
+                                   _______,  _______,  _______,
+    // right handa
+       XXXXXXX,  XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
+       XXXXXXX,  XXXXXXX, XXXXXXX, XXXXXXX, KC_LT,   KC_GT,   KC_PIPE,
+                 KC_CIRC, KC_AMPR, KC_ASTR, KC_LPRN, KC_RPRN, KC_QUOT,
+       XXXXXXX,  XXXXXXX, XXXXXXX, XXXXXXX, KC_LCBR, KC_RCBR, KC_PLUS,
+                          _______, _______, KC_LBRC, KC_RBRC, XXXXXXX,
+       _______,  _______,
+       _______,
+       _______,  _______, _______
+),
 };
 
 const uint16_t PROGMEM fn_actions[] = {
-    [0] = ACTION_FUNCTION(BASE),
+    [0] = ACTION_FUNCTION(QWERTY),
     [1] = ACTION_LAYER_TAP_TOGGLE(MOUS),                // FN1 - Momentary Layer 1 (Symbols)
-    [2] = ACTION_LAYER_MOMENTARY(BASE)
+    [2] = ACTION_LAYER_MOMENTARY(QWERTY)
 };
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
@@ -243,6 +373,11 @@ const macro_t *action_get_macro(keyrecord_t *record, uint8_t id, uint8_t opt)
         case M_000:
             if (record->event.pressed) {
                 return MACRO( I(25), T(P0), T(P0), T(P0), END );
+            }
+            break;
+        case M_0000:
+            if (record->event.pressed) {
+                return MACRO( I(25), T(P0), T(P0), T(P0), T(P0), END );
             }
             break;
         case M_DBQUOT:
